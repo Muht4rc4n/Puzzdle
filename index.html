@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puzzdle - Battle Arena</title>
+    <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar glass">
+        <div class="logo" id="logoBtn">🧩 Puzzdle</div>
+        <div class="nav-links">
+            <button class="nav-btn active" id="navHomeBtn"><i class="icon">🏠</i> Şablonlar</button>
+            <button class="nav-btn" id="navBattleBtn"><i class="icon">⚔️</i> Battle Arena</button>
+            <button class="nav-btn" id="navAIStudioBtn"><i class="icon">✨</i> AI Studio</button>
+            <button class="nav-btn" id="navLeaderBtn"><i class="icon">🏆</i> Liderlik</button>
+            <button class="nav-btn" id="navAdminBtn" style="display: none; color: #ffeb3b;"><i class="icon">👑</i> Admin</button>
+        </div>
+        <div class="user-profile" style="cursor: pointer;">
+            <div class="avatar" id="navProfileAvatar">ME</div>
+        </div>
+    </nav>
+
+    <!-- Main Container supporting SPA screens -->
+    <main class="container">
+        
+        <!-- SCREEN 1: HOME / TEMPLATES -->
+        <section id="home-screen" class="screen active">
+            <div class="hero-section text-center">
+                <h1>Yapboz Şablonunu Seç ve Başla 🧩</h1>
+                <p>Arkadaşlarınla sesli sohbet eşliğinde yarış veya tek başına zihnini dinlendir.</p>
+            </div>
+            
+            <div class="templates-grid" id="global-templates-grid">
+                <!-- Şablonlar veritabanından dinamik olarak yüklenecektir -->
+            </div>
+            
+            <!-- PREMIUM APP FOOTER (Sadece ana şablonlar sayfasında) -->
+            <footer id="appFooter" class="app-footer glass">
+                <div class="footer-container">
+                    <div class="footer-brand">
+                        <div class="footer-logo">🧩 Puzzdle</div>
+                        <p>Arkadaşlarınla gerçek zamanlı düellolara katıl, sesli sohbet et ve yapay zeka ile hayalindeki yapbozları oluştur!</p>
+                    </div>
+                    
+                    <div class="footer-links-group">
+                        <div class="footer-column">
+                            <h4>Keşfet</h4>
+                            <ul>
+                                <li><a href="#" id="footHomeLink">🏠 Şablonlar</a></li>
+                                <li><a href="#" id="footBattleLink">⚔️ Battle Arena</a></li>
+                                <li><a href="#" id="footAiLink">✨ AI Studio</a></li>
+                                <li><a href="#" id="footLeaderLink">🏆 Liderlik</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="footer-column">
+                            <h4>Kurumsal</h4>
+                            <ul>
+                                <li><a href="#" onclick="return false;">Hakkımızda</a></li>
+                                <li><a href="#" onclick="return false;">İletişim</a></li>
+                                <li><a href="#" onclick="return false;">Kariyer</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="footer-column">
+                            <h4>Destek & Güvenlik</h4>
+                            <ul>
+                                <li><a href="#" onclick="return false;">Kullanıcı Sözleşmesi</a></li>
+                                <li><a href="#" onclick="return false;">Gizlilik Politikası</a></li>
+                                <li><a href="#" onclick="return false;">Çerez Tercihleri</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-bottom">
+                    <p>&copy; 2026 Puzzdle Arena. Tüm Hakları Saklıdır. | Powered by Advanced AI 🚀</p>
+                    <div class="footer-socials">
+                        <a href="#" class="social-icon" onclick="return false;">🐦</a>
+                        <a href="#" class="social-icon" onclick="return false;">📸</a>
+                        <a href="#" class="social-icon" onclick="return false;">💬</a>
+                        <a href="#" class="social-icon" onclick="return false;">🐙</a>
+                    </div>
+                </div>
+            </footer>
+        </section>
+
+        <!-- SCREEN 2: GAME ARENA -->
+        <section id="game-screen" class="screen">
+            <div class="game-header">
+                <button id="backToHomeBtn" class="btn secondary"><i class="icon">⬅️</i> Şablonlara Dön</button>
+                <div class="active-puzzle-title">Şablon: <strong id="currentPuzzleName">Sakin Dağ Gölü</strong></div>
+            </div>
+            
+            <div class="puzzle-section">
+                <div class="toolbar glass">
+                    <div class="tool-group">
+                        <button id="restartBtn" class="btn secondary">🔄 Yeniden Başla</button>
+                        <button id="shareBtn" class="btn secondary">🔗 Odayı Paylaş</button>
+                    </div>
+                    <div class="tool-group">
+                        <div class="score-board">
+                            <span>Skorunuz: <strong id="score">0</strong></span>
+                        </div>
+                        <button id="downloadBtn" class="btn primary">📥 A4 Baskı Al</button>
+                    </div>
+                </div>
+                
+                <div class="puzzle-workspace glass">
+                    <div class="board-container">
+                        <!-- The drop targets -->
+                        <div id="puzzle-board">
+                            <!-- Hint: transparent full image overlay -->
+                            <img id="hintOverlay" class="hint-overlay" src="" alt="Yapboz İpucu" style="display: none;">
+                        </div>
+                    </div>
+                    <div class="pieces-container">
+                        <h3 class="pieces-title">Parçalar</h3>
+                        <!-- The draggable pieces -->
+                        <div id="pieces-tray"></div>
+                    </div>
+                </div>
+
+                <!-- Hint Toggle Switch -->
+                <div class="hint-toggle-row">
+                    <span class="hint-label">🖼️ Tamamlanmış Hali</span>
+                    <label class="toggle-switch" for="hintToggle">
+                        <input type="checkbox" id="hintToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: PROFILE SCREEN -->
+        <section id="profile-screen" class="screen">
+            <div class="profile-header glass">
+                <div class="profile-avatar-large">ME</div>
+                <div class="profile-info-block">
+                    <h2 id="profileName">Muhtarcan Ergen</h2>
+                    <p class="profile-subtitle">🏆 Puzzdle Ustası (Master Level 12)</p>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card glass">
+                    <div class="stat-icon">✨</div>
+                    <div class="stat-value" id="statScore">1500</div>
+                    <div class="stat-label">Toplam Puan</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon">⚔️</div>
+                    <div class="stat-value" id="statMatches">42</div>
+                    <div class="stat-label">Oynanan Maç</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon">🧩</div>
+                    <div class="stat-value">Kolay (5x4)</div>
+                    <div class="stat-label">Tercih Edilen</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon">👑</div>
+                    <div class="stat-value">Oyuncu</div>
+                    <div class="stat-label">Hesap Rolü</div>
+                </div>
+            </div>
+
+            <!-- Favorites Gallery Section -->
+            <div class="gallery-title-wrapper">
+                <h2>Beğendiğim Şablonlar ❤️</h2>
+                <p>Favorilere eklediğiniz şablonlardan dilediğinizi seçip hemen oynamaya başlayın.</p>
+            </div>
+
+            <div class="favorites-gallery-container">
+                <!-- Favorites grid dynamic render destination -->
+                <div class="templates-grid" id="favorites-gallery-grid"></div>
+
+                <!-- Empty state shown when no favorites exist -->
+                <div class="empty-state-card glass" id="favorites-empty-state" style="display: none;">
+                    <div class="empty-icon">❤️</div>
+                    <h3>Henüz hiçbir şablonu favorilemediniz!</h3>
+                    <p>Şablonlar kütüphanesine dönün ve beğendiğiniz görsellerin üzerindeki kalp simgesine tıklayarak buraya ekleyin.</p>
+                    <button class="btn primary" id="exploreTemplatesBtn">Şablonları Keşfet 🧭</button>
+                </div>
+            </div>
+
+            <!-- Battle History Section -->
+            <div class="gallery-title-wrapper" style="margin-top: 3rem;">
+                <h2>Düello Geçmişi ⚔️</h2>
+                <p>Katıldığınız Battle Arena (Düello) maçlarının sonuçları ve skorları.</p>
+            </div>
+
+            <div class="battle-history-container glass" style="padding: 2rem; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.05); background: rgba(0, 0, 0, 0.2); margin-bottom: 2rem;">
+                <div class="table-responsive" id="battle-history-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Tarih</th>
+                                <th>Oda Kodu</th>
+                                <th>Yapboz</th>
+                                <th>Oyuncu 1</th>
+                                <th>Oyuncu 2</th>
+                                <th>Skorlar</th>
+                                <th>Durum / Kazanan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="battleHistoryTableBody">
+                            <!-- JS ile dinamik eklenecek -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Empty state shown when no battle history exists -->
+                <div class="empty-state-card" id="battle-history-empty-state" style="display: none; padding: 2rem 0; text-align: center; background: transparent; border: none; box-shadow: none;">
+                    <div class="empty-icon" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">⚔️</div>
+                    <h3 style="color: #fff; margin-bottom: 0.5rem;">Henüz hiçbir düelloya katılmadınız!</h3>
+                    <p style="color: #888; max-width: 400px; margin: 0 auto 1.5rem auto; font-size: 0.9rem;">Battle Arena lobisinden bir oda kurarak veya arkadaşınızın odasına katılarak hemen düelloya başlayın.</p>
+                    <button class="btn primary" id="playBattleNowBtn">Lobiyi Keşfet 🏟️</button>
+                </div>
+            </div>
+
+            <!-- Logout Button Wrapper -->
+            <div class="logout-btn-wrapper" style="margin-top: 2rem; display: flex; justify-content: flex-end;">
+                <button class="btn secondary" id="logoutBtn" style="border-color: rgba(255, 51, 102, 0.3); color: #ff3366; font-weight: 600;">Çıkış Yap 🚪</button>
+            </div>
+        </section>
+
+        <!-- SCREEN 4: AI STUDIO -->
+        <section id="ai-studio-screen" class="screen">
+            <div class="hero-section text-center">
+                <h1>AI Studio: Kendi Yapbozunu Üret ✨</h1>
+                <p>Hayalindeki görseli kelimelere dök, yapay zeka senin için saniyeler içinde benzersiz bir yapboz üretsin!</p>
+            </div>
+            
+            <div class="ai-studio-container glass">
+                <div class="ai-input-panel">
+                    <div class="input-group">
+                        <label for="aiPromptInput">Hayalindeki Görseli Tarif Et:</label>
+                        <textarea id="aiPromptInput" placeholder="Örn: Uzayda yüzen sevimli bir astronot kedi, cyberpunk tarzı, yüksek detaylı..."></textarea>
+                    </div>
+                    
+                    <div class="input-row" style="display: flex; gap: 1rem;">
+                        <div class="input-group" style="flex: 1;">
+                            <label for="aiStyleSelect">Görsel Tarzı:</label>
+                            <select id="aiStyleSelect" class="glass-select">
+                                <option value="cyberpunk">Cyberpunk / Neon</option>
+                                <option value="nature">Realistik Doğa</option>
+                                <option value="space">Kozmik / Bilim Kurgu</option>
+                                <option value="anime">Anime / Çizim</option>
+                                <option value="oil-painting">Yağlı Boya Tablo</option>
+                                <option value="pixel-art">Pixel Art</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button id="generateAiImageBtn" class="btn primary btn-full">🎨 Görseli Üret</button>
+                </div>
+                
+                <div class="ai-preview-panel glass">
+                    <div id="aiImagePreviewContainer" class="preview-box">
+                        <div class="preview-placeholder">
+                            <span class="preview-icon">✨</span>
+                            <p>Üretilen görsel burada gösterilecek.</p>
+                        </div>
+                    </div>
+                    
+                    <div id="aiStudioActions" class="card-actions" style="display: none; width: 100%; margin-top: 1rem; gap: 0.8rem; flex-wrap: wrap;">
+                        <select id="aiDifficultySelect" class="difficulty-select glass-select" style="width: 100%; padding: 0.45rem 0.5rem; font-size: 0.8rem; margin-bottom: 0.3rem;">
+                            <option value="easy" selected>🟢 Kolay (4x3)</option>
+                            <option value="medium">🟡 Orta (6x5)</option>
+                            <option value="hard">🔴 Zor (8x6)</option>
+                        </select>
+                        <button id="aiSoloBtn" class="btn secondary" style="flex: 1; padding: 0.6rem 0.5rem; font-size: 0.85rem;">👤 Tekli Oyna</button>
+                        <button id="aiBattleBtn" class="btn primary" style="flex: 1; padding: 0.6rem 0.5rem; font-size: 0.85rem;">⚔️ Düello</button>
+                        <button id="aiSaveGalleryBtn" class="btn secondary icon-btn" style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;" title="Galeriye Kaydet">💾</button>
+                        <button id="aiDownloadBtn" class="btn secondary icon-btn" style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;" title="Görseli İndir">📥</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 5: BATTLE LOBBY -->
+        <section id="battle-screen" class="screen">
+            <div class="hero-section">
+                <h1>Düello Lobisi ⚔️</h1>
+                <p>Oda kur ve arkadaşını davet et, ya da bir oda koduna katıl!</p>
+            </div>
+
+            <div class="battle-lobby-container">
+                <!-- Panel 1: ODA KUR -->
+                <div class="lobby-panel glass">
+                    <div class="lobby-panel-header">
+                        <div>
+                            <span class="lobby-panel-icon">🏟️</span>
+                        </div>
+                        <div>
+                            <h2>Oda Kur</h2>
+                            <p>Görsel seç ve düelloya başla</p>
+                        </div>
+                    </div>
+
+                    <div class="lobby-image-grid" id="lobbyImageGrid">
+                        <div class="lobby-img-option selected" data-imgkey="nature" data-image="assets/puzzle_nature.png" data-name="Sakin Dağ Gölü">
+                            <img src="assets/puzzle_nature.png" alt="Sakin Dağ Gölü">
+                            <div class="lobby-img-label">Sakin Dağ Gölü</div>
+                        </div>
+                        <div class="lobby-img-option" data-imgkey="space" data-image="assets/puzzle_space.png" data-name="Kozmik Bulutsu">
+                            <img src="assets/puzzle_space.png" alt="Kozmik Bulutsu">
+                            <div class="lobby-img-label">Kozmik Bulutsu</div>
+                        </div>
+                        <div class="lobby-img-option" data-imgkey="cyberpunk" data-image="assets/puzzle_cyberpunk.png" data-name="Neon Şehir">
+                            <img src="assets/puzzle_cyberpunk.png" alt="Neon Şehir">
+                            <div class="lobby-img-label">Neon Şehir</div>
+                        </div>
+                        <div class="lobby-img-option" data-imgkey="demo" data-image="assets/puzzle_demo_art.png" data-name="Orijinal Sanat">
+                            <img src="assets/puzzle_demo_art.png" alt="Orijinal Sanat">
+                            <div class="lobby-img-label">Orijinal Sanat</div>
+                        </div>
+                    </div>
+
+                    <select id="lobbyDifficultySelect" class="difficulty-select glass-select" style="width: 100%; padding: 0.55rem 0.8rem; font-size: 0.9rem;">
+                        <option value="easy" selected>🟢 Kolay (4x3 — 12 Parça)</option>
+                        <option value="medium">🟡 Orta (6x5 — 30 Parça)</option>
+                        <option value="hard">🔴 Zor (8x6 — 48 Parça)</option>
+                    </select>
+
+                    <button id="createRoomBtn" class="btn primary btn-full">⚔️ Oda Oluştur</button>
+
+                    <!-- Invite box appears after room creation -->
+                    <div class="invite-box" id="inviteBox">
+                        <p style="color: #aaa; font-size: 0.85rem;">Oda kodu hazır! Arkadaşına gönder:</p>
+                        <div class="invite-code" id="inviteCode">-</div>
+                        <button id="copyInviteBtn" class="btn secondary" style="width: 100%;">📋 Kodu Kopyala</button>
+                        <button id="startBattleBtn" class="btn primary" style="width: 100%;">🚀 Düelloya Gir</button>
+                        <p class="invite-status">Bekleniyor<span class="dot-pulse">...</span></p>
+                    </div>
+                </div>
+
+                <!-- Mobile Divider -->
+                <div class="lobby-divider">veya</div>
+
+                <!-- Panel 2: ODAYA KATIL -->
+                <div class="lobby-panel glass">
+                    <div class="lobby-panel-header">
+                        <div>
+                            <span class="lobby-panel-icon">🎟️</span>
+                        </div>
+                        <div>
+                            <h2>Odaya Katıl</h2>
+                            <p>Arkadaşının gönderdiği kodu gir</p>
+                        </div>
+                    </div>
+
+                    <div class="join-illustration">
+                        <div class="join-icon">🤝</div>
+                        <p>Arkadaşından aldığın oda kodunu aşağıya yapıştır ve düelloya katıl!</p>
+                    </div>
+
+                    <input type="text" id="joinCodeInput" class="lobby-code-input" placeholder="Oda kodu gir..." maxlength="8" autocomplete="off">
+
+                    <button id="joinRoomBtn" class="btn primary btn-full">🎮 Odaya Katıl</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 5: LEADERBOARD -->
+        <section id="leaderboard-screen" class="screen">
+            <div class="hero-section text-center">
+                <h1>Liderlik Tablosu 🏆</h1>
+                <p>En iyi yapboz çözücüler burada! Sıralamanda yukarı çık.</p>
+            </div>
+
+            <!-- Podium: Top 3 -->
+            <div class="podium-container">
+                <div class="podium-slot silver" id="podium-2">
+                    <div class="podium-avatar">2</div>
+                    <div class="podium-name">-</div>
+                    <div class="podium-score">0</div>
+                    <div class="podium-bar">
+                        <span class="podium-rank">🥈</span>
+                    </div>
+                </div>
+                <div class="podium-slot gold" id="podium-1">
+                    <div class="podium-avatar">1</div>
+                    <div class="podium-name">-</div>
+                    <div class="podium-score">0</div>
+                    <div class="podium-bar">
+                        <span class="podium-rank">🥇</span>
+                    </div>
+                </div>
+                <div class="podium-slot bronze" id="podium-3">
+                    <div class="podium-avatar">3</div>
+                    <div class="podium-name">-</div>
+                    <div class="podium-score">0</div>
+                    <div class="podium-bar">
+                        <span class="podium-rank">🥉</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rest of leaderboard list -->
+            <div class="leaderboard-list glass" id="leaderboardList">
+                <!-- Dynamically rendered -->
+            </div>
+        </section>
+
+        <!-- SCREEN 6: LOGIN SCREEN -->
+        <section id="login-screen" class="screen">
+            <div class="auth-container glass">
+                <div class="auth-header">
+                    <h2>Puzzdle'a Giriş Yap 🔐</h2>
+                    <p>En heyecanlı yapboz düellolarına katılmak için hesabına giriş yap.</p>
+                </div>
+                <form id="loginForm" class="auth-form">
+                    <div class="input-group">
+                        <label for="loginEmail">E-Posta Adresi</label>
+                        <input type="email" id="loginEmail" placeholder="ornek@puzzdle.com" required autocomplete="email">
+                    </div>
+                    <div class="input-group">
+                        <label for="loginPassword">Şifre</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="btn primary btn-full">Giriş Yap 🚀</button>
+                </form>
+                <div class="auth-footer">
+                    <p>Henüz hesabın yok mu? <a href="#" id="toRegisterBtn">Hemen Kayıt Ol ✨</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 7: REGISTER SCREEN -->
+        <section id="register-screen" class="screen">
+            <div class="auth-container glass">
+                <div class="auth-header">
+                    <h2>Yeni Hesap Oluştur ✨</h2>
+                    <p>Platforma katıl, liderlik sıralamasında yerini al!</p>
+                </div>
+                <form id="registerForm" class="auth-form">
+                    <div class="input-group">
+                        <label for="registerName">Ad Soyad</label>
+                        <input type="text" id="registerName" placeholder="Muhtarcan Ergen" required autocomplete="name">
+                    </div>
+                    <div class="input-group">
+                        <label for="registerEmail">E-Posta Adresi</label>
+                        <input type="email" id="registerEmail" placeholder="ornek@puzzdle.com" required autocomplete="email">
+                    </div>
+                    <div class="input-group">
+                        <label for="registerPassword">Şifre</label>
+                        <input type="password" id="registerPassword" placeholder="••••••••" required autocomplete="new-password">
+                    </div>
+                    <button type="submit" class="btn primary btn-full">Kayıt Ol ve Başla 🎮</button>
+                </form>
+                <div class="auth-footer">
+                    <p>Zaten hesabın var mı? <a href="#" id="toLoginBtn">Giriş Yap 🔐</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 8: ADMIN SCREEN -->
+        <section id="admin-screen" class="screen">
+            <div class="hero-section text-center">
+                <h1>Sistem Yönetim Paneli 👑</h1>
+                <p>Kullanıcı hesaplarını görüntüleyin, rolleri kontrol edin ve sistemi yönetin.</p>
+            </div>
+            
+            <!-- KULLANICI YÖNETİMİ PANELİ -->
+            <div class="admin-container glass">
+                <div class="admin-header-row">
+                    <h2>Kayıtlı Kullanıcılar</h2>
+                    <span class="user-badge" id="totalUsersBadge">Toplam: 0 Kullanıcı</span>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Kullanıcı</th>
+                                <th>E-Posta</th>
+                                <th>Rol</th>
+                                <th>Toplam Puan</th>
+                                <th>Oynanan Maç</th>
+                                <th>Kayıt Tarihi</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUsersTableBody">
+                            <!-- JS ile dinamik eklenecek -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- YAPBOZ ŞABLONLARI YÖNETİMİ PANELİ (SADECE ADMİN) -->
+            <div class="admin-container glass" style="margin-top: 3rem;">
+                <div class="admin-header-row">
+                    <h2>Yapboz Şablonları Yönetimi</h2>
+                    <span class="user-badge" id="totalTemplatesBadge">Toplam: 0 Şablon</span>
+                </div>
+                
+                <!-- Şablon Ekleme Formu -->
+                <form id="adminAddTemplateForm" class="auth-form" style="max-width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem; padding: 2rem; border-radius: 12px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.05);">
+                    <div class="input-group" style="grid-column: span 2;">
+                        <h3 style="color: #00f2fe; margin-bottom: 0.5rem;">👑 Yeni Hazır Şablon Ekle</h3>
+                    </div>
+                    <div class="input-group">
+                        <label for="tplKey">Şablon Benzersiz Anahtarı (Örn: neon-astronot, siber-kedi)</label>
+                        <input type="text" id="tplKey" placeholder="neon-astronot" required autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="tplName">Şablon Adı</label>
+                        <input type="text" id="tplName" placeholder="Siberpunk Astronot" required autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="tplUrl">Görsel URL'si (assets/... veya https://...)</label>
+                        <input type="text" id="tplUrl" placeholder="assets/puzzle_nature.png" required autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="tplCategory">Kategori</label>
+                        <select id="tplCategory" class="glass-select" style="padding: 0.85rem;">
+                            <option value="Doğa">Doğa 🌲</option>
+                            <option value="Uzay">Uzay 🌌</option>
+                            <option value="Cyberpunk">Cyberpunk 🏙️</option>
+                            <option value="Klasik" selected>Klasik 🎨</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn primary btn-full" style="grid-column: span 2; margin-top: 1rem;">🎨 Şablonu Sisteme Ekle</button>
+                </form>
+
+                <!-- Şablon Tablosu -->
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Önizleme</th>
+                                <th>Anahtar</th>
+                                <th>Şablon Adı</th>
+                                <th>Kategori</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTemplatesTableBody">
+                            <!-- JS ile dinamik eklenecek -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SIDEBAR: COLLAPSIBLE CHAT & VOICE DRAWER -->
+        <aside id="chat-drawer" class="chat-drawer glass">
+            <div class="chat-header">
+                <div class="chat-title-group">
+                    <h3 id="lobbyRoomTitle">Oda #4092 💬</h3>
+                    <span class="status-indicator" id="networkStatusText">● Çevrimiçi</span>
+                </div>
+                <button id="closeChatBtn" class="close-btn">&times;</button>
+            </div>
+            
+            <!-- Voice Controls Integrated in Drawer -->
+            <div class="voice-controls glass">
+                <div class="voice-info">
+                    <button id="voiceBtn" class="voice-btn pulse-idle">
+                        <span class="mic-icon">🎙️</span> <span id="voiceStatusText">Sese Katıl</span>
+                    </button>
+                    <span class="voice-count">(Odadakiler: <strong id="voiceCount">3</strong>)</span>
+                </div>
+                <!-- Simulated Live Sound Waveform -->
+                <div class="voice-wave-container" id="voiceWaveContainer">
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                </div>
+            </div>
+
+            <!-- Written Messages -->
+            <div class="chat-messages" id="chatMessages">
+                <!-- Message contents injected here -->
+            </div>
+            
+            <div class="chat-input">
+                <input type="text" id="chatInputField" placeholder="Mesajınızı yazın...">
+                <button class="btn send-btn" id="sendChatBtn">➤</button>
+            </div>
+        </aside>
+
+        <!-- Floating Chat Toggle Button (Visible when Drawer is closed) -->
+        <button id="chatToggleBtn" class="chat-toggle-btn glass pulse-idle">
+            <span class="btn-icon">💬</span> Sohbet & Ses
+            <span class="badge" id="chatBadge">0</span>
+        </button>
+
+    </main>
+
+    <!-- Eski footer kaldırıldı, anasayfa şablonlar bölümünün altına taşındı -->
+
+    <script src="http://localhost:5000/socket.io/socket.io.js"></script>
+    <script src="https://js.puter.com/v2/"></script>
+    <script src="puzzle.js"></script>
+</body>
+</html>
